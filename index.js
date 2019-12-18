@@ -1,6 +1,11 @@
 'use strict';
 
-const { nil, isNil, notNil, isArray, isString, identity, first, last, butlast, peek, pop, complement, exception, compose } = require('./util');
+const {
+    nil, isNil, notNil, isEmpty, isArray,
+    isString, identity, first, last, butlast,
+    complement, reverse, exception, compose
+} = require('./util');
+
 const { meta, withMeta } = require('./meta');
 
 const zipper = (isBranch, children, makeNode, root) =>
@@ -12,7 +17,7 @@ const arrayZip = root =>
 const xmlZip = root =>
     zipper(complement(isString), v => v.content, (node, children) => ({ ...node, content: children }), root);
 
-const node = loc => loc[0];
+const node = first;
 
 const isBranch = loc => meta(loc).isBranch(node(loc));
 
@@ -23,21 +28,26 @@ const children = loc => isBranch(loc)
 const makeNode = (loc, node, children) =>
     meta(loc).makeNode(node, children);
 
+const cursor = loc => {
+    const [ _, c = {} ] = loc;
+    return c;
+};
+
 const path = loc =>
-    (loc[1] || {}).pnodes;
+    cursor(loc).pnodes;
 
 const lefts = loc =>
-    (loc[1] || {}).l; // reverse here or on set?
+    cursor(loc).l;
 
 const rights = loc =>
-    (loc[1] || {}).r;
+    cursor(loc).r;
 
 const down = loc => {
     if (!isBranch(loc)) return;
     const [ node, path ] = loc;
-    const [ cs ] = children(loc);
+    const cs = children(loc);
     const [ c, ...cnext ] = cs;
-    if (isNil(cs)) return;
+    if (isEmpty(cs)) return;
     return withMeta([
         c,
         {
@@ -52,16 +62,15 @@ const down = loc => {
 const up = loc => {
     const [ node, path ] = loc;
     const { l, ppath, pnodes, r, changed } = path;
-    if (isNil(pnodes)) return;
-    // clj impl relies on behavioral side-effects of data structure optimization ... can't do the same. need to address this. for now, grab first.
-    const pnode = peek(pnodes);
+    if (isEmpty(pnodes)) return;
+    const pnode = first(pnodes);
     return withMeta((changed
-        ? [ makeNode(loc, pnode, [ ...l, ...[ node, ...r ] ]), { ...ppath, changed } ]
+        ? [ makeNode(loc, pnode, [ ...l, node, ...r ]), { ...ppath, changed } ]
         : [ pnode, ppath ]),
         meta(loc));
 };
 
-const isEnd = loc => (loc[1] || {}).end;
+const isEnd = loc => cursor(loc).end;
 
 const root = loc => {
     if (isEnd(loc)) return node(loc);
@@ -76,7 +85,7 @@ const right = loc => {
     const [ node, path ] = loc;
     if (isNil(path)) return;
     const { l, r:rs } = path;
-    if (isNil(rs)) return;
+    if (isEmpty(rs)) return;
     const [ r, ...rnext ] = rs;
     return withMeta([
         r,
@@ -88,9 +97,9 @@ const rightmost = loc => {
     const [ node, path ] = loc;
     if (isNil(path)) return loc;
     const { l, r } = path;
-    if (isNil(r)) return loc;
+    if (isEmpty(r)) return loc;
     return withMeta([
-        pop(r),
+        last(r),
         { ...path, l: [ ...l, node, butlast(r) ], r: nil }
     ], meta(loc));
 };
@@ -100,9 +109,8 @@ const left = loc => {
     if (isNil(path)) return;
     const { l, r } = path;
     if (!isArray(l)) return;
-    // clj impl relies on behavioral side-effects of data structure optimization ... can't do the same. need to address this. for now, grab first.
     return withMeta([
-        peek(l),
+        first(l),
         { ...path, l: last(l), r: [ ...node, r ] }
     ], meta(loc));
 };
@@ -112,7 +120,7 @@ const leftmost = loc => {
     const { l, r } = path;
     if (isNil(path) || !isArray(l)) loc;
     return withMeta([
-        peek(l),
+        first(l),
         { ...path, l: [], r: [ ...rest(l), node, ...r ] }
     ], meta(loc));
 };
@@ -125,7 +133,6 @@ const insertLeft = (loc, item) => {
         node,
         { ...path, l: [ ...l, item ], changed: true }
     ], meta(loc));
-
 };
 
 const insertRight = (loc, item) => {
@@ -136,7 +143,6 @@ const insertRight = (loc, item) => {
         node,
         { ...path, r: [ item, ...r ], changed: true }
     ], meta(loc));
-
 };
 
 const replace = (loc, node) => {
@@ -162,7 +168,7 @@ const next = loc => {
     if (right(loc)) return right(loc);
     while (true) {
         if (isNil(up(loc))) return [ node(loc), { end: true } ];
-        if (r = right(up(loc))) return r;
+        if (right(up(loc))) return right(up(loc));
         loc = up(loc);
     }
 };
@@ -182,14 +188,14 @@ const remove = loc => {
     const { l, ppath, pnodes, r:rs } = path;
     if (isNil(path)) return exception('Remove at top');
     if (l.length < 1) return withMeta([
-        makeNode(loc, peek(pnodes), rs),
+        makeNode(loc, first(pnodes), rs),
         { ...ppath, changed: true }
     ], meta(loc));
 
     while (true) {
         loc = withMeta([
-            peek(l),
-            { ...path, l: pop(l), changed: true }
+            first(l),
+            { ...path, l: last(l), changed: true }
         ], meta(loc));
         const child = isBranch(loc) ? down(loc) : nil;
         if (isNil(child)) return loc;

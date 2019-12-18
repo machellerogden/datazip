@@ -3,7 +3,8 @@
 const {
     isPlainObject,
     clone,
-    assign
+    assign,
+    box
 } = require('./util');
 
 const SYM_META = Symbol.for('datazip.meta');
@@ -16,8 +17,9 @@ function withMeta(target, data) {
     const targetMeta = meta(target);
     const givenMeta = clone(data);
     const updatedMeta = assign(targetMeta, givenMeta);
-    result[SYM_META] = updatedMeta;
-    return result;
+    const boxed = box(result);
+    boxed[SYM_META] = updatedMeta;
+    return boxed;
 }
 
 module.exports = {

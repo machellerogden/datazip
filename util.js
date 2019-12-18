@@ -1,5 +1,8 @@
 'use strict';
 
+const { inspect } = require('util');
+const { EOL } = require('os');
+
 const _ = exports;
 
 const nt = new Set(['string', 'number']);
@@ -10,6 +13,7 @@ _.isArray = Array.isArray;
 _.assign = Object.assign;
 _.is = (v, t) => typeof v === t;
 _.isNil = v => v == _.nil;
+_.isEmpty = v => _.isNil(v) || v.length === 0;
 _.notNil = v => v != _.nil;
 _.isObject = v => _.notNil(v) && _.is(v, 'object');
 _.isEqual = (a, b) => [ a, b ].every(_.isObject)
@@ -36,12 +40,26 @@ _.compose = (...fns) => (f => (...args) => _.pipe(...f)(...args))([ ...fns ].rev
 _.partial = (fn, ...args) => (...rest) => fn(...[ ...args, ...rest ]);
 _.partialRight = (fn, ...args) => (...rest) => fn(...[ ...rest, ...args ]);
 
+_.reverse = v => _.isArray(v) ? v.reverse() : nil;
 _.first = v => _.isArray(v) ? v[0] : nil;
 _.last = v => _.isArray(v) ? v[v.length - 1] : nil;
 _.butlast = v => _.isArray(v) ? v.slice(0, -1) : nil;
 
-// TODO - annotate for behavioral side-effects?
-_.peek = _.first;
-_.pop = _.last;
+_.box = v => _.is(v, 'string')  ? String(v)
+           : _.is(v, 'number')  ? Number(v)
+           : _.is(v, 'boolean') ? Boolean(v)
+           :                    v;
+
+_.intersperse = (d, v) => _.isArray(v)
+    ? [ ...v.map(e => [d, e]).slice(1) ]
+    : nil;
 
 _.exception = msg => { throw new Error(msg); };
+
+_.pprint = (...a) =>
+    process.stdout.write(`${
+        a.map(v => typeof v === 'object'
+            ? inspect(v, { depth: 8, colors: true })
+            : String(v)).join(' ')
+    }${EOL}`);
+
