@@ -61,6 +61,7 @@ const down = loc => {
 
 const up = loc => {
     const [ node, path ] = loc;
+    if (isEmpty(path)) return;
     const { l, ppath, pnodes, r, changed } = path;
     if (isEmpty(pnodes)) return;
     const pnode = first(pnodes);
@@ -108,17 +109,17 @@ const left = loc => {
     const [ node, path ] = loc;
     if (isNil(path)) return;
     const { l, r } = path;
-    if (!isArray(l)) return;
+    if (isEmpty(l)) return;
     return withMeta([
-        first(l),
-        { ...path, l: last(l), r: [ ...node, r ] }
+        last(l),
+        { ...path, l: butlast(l), r: [ ...node, r ] }
     ], meta(loc));
 };
 
 const leftmost = loc => {
     const [ node, path ] = loc;
     const { l, r } = path;
-    if (isNil(path) || !isArray(l)) loc;
+    if (isNil(path) || isEmpty(l)) loc;
     return withMeta([
         first(l),
         { ...path, l: [], r: [ ...rest(l), node, ...r ] }
@@ -167,7 +168,7 @@ const next = loc => {
     if (isBranch(loc) && down(loc)) return down(loc);
     if (right(loc)) return right(loc);
     while (true) {
-        if (isNil(up(loc))) return [ node(loc), { end: true } ];
+        if (isNil(up(loc))) return withMeta([ node(loc), { end: true } ], meta(loc));
         if (right(up(loc))) return right(up(loc));
         loc = up(loc);
     }

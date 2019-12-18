@@ -1,6 +1,6 @@
 'use strict';
 
-const { pipe, pprint } = require('./util');
+const { pipe, pprint, partialRight } = require('./util');
 const {
     zipper,
     arrayZip,
@@ -43,24 +43,20 @@ const data = [
 
 const dz = arrayZip(data);
 
-//pprint('dz', node(dz)); // [ [ "a", "b" ], "c", [ "d", "e" ] ]
-//pprint('down', pipe(down, node)(dz)); // [ "a", "b" ]
-//pprint('down, up', pipe(down, up, down, node)(dz)); // [ "a", "b" ]
-//pprint('down, right', pipe(down, right, node)(dz)); // "c"
-//pprint('down, down, right', pipe(down, down, right, node)(dz)); // => "b"
-pprint('down, down, right, up, right', pipe(down, down, right, up, right, node)(dz)); // => "c"
-//pprint('down, down, right, left', pipe(down, down, right, left, node)(dz)); // => "a"
-//pprint('next', pipe(next, node)(dz)); // [ "a", "b" ]
-//pprint('next, next', pipe(next, next, node)(dz)); // "a"
-//pprint('next, next, next', pipe(next, next, next, node)(dz)); // "b"
-//pprint('next, next, next, next', pipe(next, next, next, next, node)(dz)); // "c"
-//pprint('next, next, next, next, next', pipe(next, next, next, next, next, node)(dz)); // [ "d", "e" ]
-//pprint('next, next, next, next, next, next', pipe(next, next, next, next, next, next, node)(dz)); // "d"
-//pprint('next, next, next, next, next, next, next', pipe(next, next, next, next, next, next, next, node)(dz)); // "e"
-//pprint('next, next, next, next, next, next, next, next', pipe(next, next, next, next, next, next, next, next, node)(dz)); // [ [ "a", "b" ], "c", [ "d", "e" ] ]
-//pprint(pipe(down, next, next)(dz));
-//pprint(pipe(down, right, right, down)(dz));
-//pprint(pipe(down, right, right, down, lefts)(dz));
-//pprint(pipe(down, right, right, down, right, rights)(dz));
-//pprint(pipe(down, right, right, down, right, up, up)(dz));
-//pprint(pipe(down, right, right, down, right, path)(dz));
+pprint('[ [ "a", "b" ], "c", [ "d", "e" ] ]', node(dz));
+pprint('[ "a", "b" ]', pipe(down, node)(dz));
+pprint('[ "a", "b" ]', pipe(down, up, down, node)(dz));
+pprint('"c"', pipe(down, right, node)(dz));
+pprint('"b"', pipe(down, down, right, node)(dz));
+pprint('"c"', pipe(down, down, right, up, right, node)(dz));
+pprint('"a"', pipe(down, down, right, left, node)(dz));
+pprint('[ "a", "b" ]', pipe(next, node)(dz));
+pprint('"a"', pipe(next, next, node)(dz));
+pprint('"b"', pipe(next, next, next, node)(dz));
+pprint('"c"', pipe(next, next, next, next, node)(dz));
+pprint('[ "d", "e" ]', pipe(next, next, next, next, next, node)(dz));
+pprint('"d"', pipe(next, next, next, next, next, next, node)(dz));
+pprint('"e"', pipe(next, next, next, next, next, next, next, node)(dz));
+pprint('[ [ "a", "b" ], "c", [ "d", "e" ] ]', pipe(next, next, next, next, next, next, next, next, node)(dz));
+pprint('"z"', pipe(down, partialRight(insertRight, 'z'), right, node)(dz));
+pprint('"z"', pipe(down, partialRight(insertLeft, 'z'), left, node)(dz));
