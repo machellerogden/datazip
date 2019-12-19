@@ -1,16 +1,16 @@
 {
   "name": "datazip",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "clojure-style zippers for node",
   "main": "index.js",
   "scripts": {
     "test": "ava test/*.spec.js"
   },
   "keywords": [
-      "zipper",
-      "zippers",
-      "data",
-      "clojure"
+    "zipper",
+    "zippers",
+    "data",
+    "clojure"
   ],
   "author": "Mac Heller-Ogden",
   "license": "MIT",
