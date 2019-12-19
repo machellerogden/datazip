@@ -66,7 +66,7 @@ const {
 //const jsonObj = parser.parse(xmlData, options);
 //pprint(jsonObj);
 //}
- 
+
 // IR
 //const ir = parser.getTraversalObj(xmlData, options);
 //pprint(ir);
@@ -90,33 +90,49 @@ const {
 const xmlData = '<a><b>c</b><b z="123">c</b><d>e</d></a>';
 const expat = require('node-expat')
 const parser = new expat.Parser('UTF-8')
- 
-parser.on('startElement', (name, attrs) =>
-    console.log(name, attrs));
 
-parser.on('endElement', name =>
-    console.log(name));
+parser.on('startElement', (name, attrs) => {
+    console.log('startElement:', name, attrs);
+});
 
-parser.on('text', text =>
-    console.log(text));
+parser.on('endElement', name => {
+    console.log('endElement:', name);
+});
 
-parser.on('error', error =>
-    console.error(error));
+parser.on('text', text => {
+    console.log('text:', text);
+});
 
-/**
-#on('startElement' function (name, attrs) {})
-#on('endElement' function (name) {})
-#on('text' function (text) {})
-#on('processingInstruction', function (target, data) {})
-#on('comment', function (s) {})
-#on('xmlDecl', function (version, encoding, standalone) {})
-#on('startCdata', function () {})
-#on('endCdata', function () {})
-#on('entityDecl', function (entityName, isParameterEntity, value, base, systemId, publicId, notationName) {})
-#on('error', function (e) {})
-#stop() pauses
-#resume() resumes
-*/
+parser.on('processingInstruction', (target, data) => {
+    console.log('processingInstruction:', target, data);
+});
+
+parser.on('comment', s => {
+    console.log('comment:', s);
+});
+
+parser.on('xmlDecl', (version, encoding, standalone) => {
+    console.log('xmlDecl:', version, encoding, standalone);
+});
+
+parser.on('startCdata', () => {
+    console.log('startCdata');
+});
+
+parser.on('endCdata', () => {
+    console.log('endCdata');
+});
+
+parser.on('entityDecl', (entityName, isParameterEntity, value, base, systemId, publicId, notationName) => {
+    console.log('entityDecl:', entityName, isParameterEntity, value, base, systemId, publicId, notationName);
+});
+
+parser.on('error', e => {
+    console.log('error:', e);
+});
+
+// parser.stop() // pauses
+// parser.resume() // resumes
 
 parser.write(xmlData);
 
