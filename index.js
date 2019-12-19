@@ -6,7 +6,7 @@ const {
     complement, reverse, exception, compose
 } = require('./lib/util');
 
-const { meta, withMeta } = require('./meta');
+const { meta, withMeta } = require('./lib/meta');
 
 const zipper = (isBranch, children, makeNode, root) =>
     withMeta([ root, nil ], { isBranch, children, makeNode });
@@ -15,9 +15,13 @@ const arrayZip = root =>
     zipper(isArray, identity, (node, children) => withMeta(children, meta(node)), root);
 
 const xmlZip = root =>
-    zipper(complement(isString), v => v.content, (node, children) => ({ ...node, content: children }), root);
+    zipper(complement(isString), v => v.content || v, (node, children) => ({ ...node, content: children }), root);
 
 const node = first;
+
+const attr = name => compose(n => (n.attrs || {})[name], first);
+
+const text = compose(n => n.text, first);
 
 const isBranch = loc => meta(loc).isBranch(node(loc));
 
@@ -209,6 +213,8 @@ module.exports = {
     arrayZip,
     xmlZip,
     node,
+    attr,
+    text,
     isBranch,
     children,
     makeNode,

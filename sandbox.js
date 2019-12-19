@@ -1,10 +1,13 @@
 'use strict';
 
+const { Parser } = require('./xml-parser'); 
 const { pipe, pprint, partialRight } = require('./lib/util');
 const {
     zipper,
     arrayZip,
     xmlZip,
+    attr,
+    text,
     node,
     isBranch,
     children,
@@ -59,6 +62,13 @@ const dz = arrayZip(data);
 //pprint('"d"', pipe(next, next, next, next, next, next, node)(dz));
 //pprint('"e"', pipe(next, next, next, next, next, next, next, node)(dz));
 //pprint('[ [ "a", "b" ], "c", [ "d", "e" ] ]', pipe(next, next, next, next, next, next, next, next, node)(dz));
-pprint('"z"', pipe(down, partialRight(insertRight, 'z'), right, node)(dz));
-pprint('"z"', pipe(down, partialRight(insertLeft, 'z'), left, node)(dz));
-pprint('[ "a", "z", "b" ]', pipe(down, down, partialRight(insertRight, 'z'), up, node)(dz));
+//pprint('"z"', pipe(down, partialRight(insertRight, 'z'), right, node)(dz));
+//pprint('"z"', pipe(down, partialRight(insertLeft, 'z'), left, node)(dz));
+//pprint('[ "a", "z", "b" ]', pipe(down, down, partialRight(insertRight, 'z'), up, node)(dz));
+
+(async function () {
+    const tree = await Parser().parse('<a><b>c</b><b z="123">d</b><b><p>e</p><![CDATA[characters with markup]]></b></a>');
+    const tz = xmlZip(tree);
+    pprint('"d"', pipe(down, down, right, text)(tz));
+    pprint('123', pipe(down, down, right, attr('z'))(tz));
+})();
