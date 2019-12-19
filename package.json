@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./test.js"
+    "test": "ava test/*.spec.js"
   },
   "keywords": [],
   "author": "Mac Heller-Ogden",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^2.4.0",
     "fast-xml-parser": "^3.15.1",
     "he": "^1.2.0",
     "node-expat": "^2.3.18",
