@@ -5,7 +5,7 @@ const {
     clone,
     assign,
     box
-} = require('./util');
+} = require('./lib/util');
 
 const SYM_META = Symbol.for('datazip.meta');
 

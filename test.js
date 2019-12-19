@@ -6,7 +6,7 @@ const assert = require('assert');
 
 const {
     pipe, pprint, partialRight
-} = require('./util');
+} = require('./lib/util');
 
 const {
     zipper, arrayZip, xmlZip, node, isBranch, children,

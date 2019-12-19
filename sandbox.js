@@ -1,6 +1,6 @@
 'use strict';
 
-const { pipe, pprint, partialRight } = require('./util');
+const { pipe, pprint, partialRight } = require('./lib/util');
 const {
     zipper,
     arrayZip,

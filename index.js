@@ -4,7 +4,7 @@ const {
     nil, isNil, notNil, isEmpty, isArray,
     isString, identity, first, last, butlast,
     complement, reverse, exception, compose
-} = require('./util');
+} = require('./lib/util');
 
 const { meta, withMeta } = require('./meta');
 
