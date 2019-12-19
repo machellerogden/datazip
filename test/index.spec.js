@@ -5,14 +5,12 @@ import test from 'ava';
 const { pipe, pprint, partialRight } = require('../lib/util');
 
 const {
-    zipper, arrayZip, xmlZip, node, attr, text, isBranch,
-    children, makeNode, path, lefts, rights, down, up,
-    isEnd, root, right, rightmost, left, leftmost,
-    insertRight, insertLeft, replace, edit, insertChild,
-    appendChild, next, prev, remove
+    zipper, arrayZip, node, isBranch, children, makeNode,
+    path, lefts, rights, down, up, isEnd, root, right,
+    rightmost, left, leftmost, insertRight, insertLeft,
+    replace, edit, insertChild, appendChild, next, prev,
+    remove
 } = require('..');
-
-const { Parser } = require('../xml-parser');
 
 const data = [
     [ 'a', 'b' ],
@@ -21,7 +19,6 @@ const data = [
 ];
 
 const dz = arrayZip(data);
-
 
 /**********************************************************************
  * array zip
@@ -101,21 +98,4 @@ test("down, insertLeft 'z', left, node", async t =>{
 
 test("down, down, insertRight 'z', up, node", async t =>{
     t.deepEqual(pipe(down, down, partialRight(insertRight, 'z'), up, node)(dz), [ 'a', 'z', 'b' ]);
-});
-
-
-/**********************************************************************
- * xml zip
- */
-
-test("xml - down, down, right, text", async t =>{
-    const tree = await Parser().parse('<a><b>c</b><b z="123">d</b><b><p>e</p><![CDATA[characters with markup]]></b></a>');
-    const tz = xmlZip(tree);
-    t.deepEqual(pipe(down, down, right, text)(tz), 'd');
-});
-
-test("xml - down, down, right, attr 'z'", async t =>{
-    const tree = await Parser().parse('<a><b>c</b><b z="123">d</b><b><p>e</p><![CDATA[characters with markup]]></b></a>');
-    const tz = xmlZip(tree);
-    t.deepEqual(pipe(down, down, right, attr('z'))(tz), '123');
 });

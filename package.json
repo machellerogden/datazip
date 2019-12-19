@@ -15,9 +15,7 @@
   "author": "Mac Heller-Ogden",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^2.4.0",
-    "he": "^1.2.0",
-    "node-expat": "^2.3.18"
+    "ava": "^2.4.0"
   },
   "dependencies": {},
   "engines": {
