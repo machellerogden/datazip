@@ -1,8 +1,6 @@
 'use strict';
 
 const { inspect } = require('util');
-const { EOL } = require('os');
-
 const _ = exports;
 
 const nt = new Set(['string', 'number']);
@@ -57,9 +55,8 @@ _.intersperse = (d, v) => _.isArray(v)
 _.exception = msg => { throw new Error(msg); };
 
 _.pprint = (...a) =>
-    process.stdout.write(`${
+    console.log(`${
         a.map(v => typeof v === 'object'
             ? inspect(v, { depth: 8, colors: true })
             : String(v)).join(' ')
-    }${EOL}`);
-
+    }`);
