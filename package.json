@@ -1,20 +1,27 @@
 {
   "name": "datazip",
   "version": "0.0.0",
-  "description": "",
+  "description": "clojure-style zippers for node",
   "main": "index.js",
   "scripts": {
     "test": "ava test/*.spec.js"
   },
-  "keywords": [],
+  "keywords": [
+      "zipper",
+      "zippers",
+      "data",
+      "clojure"
+  ],
   "author": "Mac Heller-Ogden",
   "license": "MIT",
   "devDependencies": {
     "ava": "^2.4.0",
-    "fast-xml-parser": "^3.15.1",
     "he": "^1.2.0",
-    "node-expat": "^2.3.18",
-    "xml2js": "^0.4.22"
+    "node-expat": "^2.3.18"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+    "node": ">=10.6.0",
+    "npm": ">=5.0.0"
+  }
 }
