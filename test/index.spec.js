@@ -2,7 +2,7 @@
 
 import test from 'ava';
 
-const { pipe, pprint, partialRight } = require('../lib/util');
+const { pipe, pprint, partialRight } = require('nilish');
 
 const {
     zipper, arrayZip, node, isBranch, children, makeNode,

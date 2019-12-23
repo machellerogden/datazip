@@ -1,12 +1,10 @@
 'use strict';
 
 const {
-    nil, isNil, notNil, isEmpty, isArray,
-    isString, identity, first, last, butlast,
+    meta, withMeta, nil, isNil, notNil, isEmpty,
+    isArray, isString, identity, first, last, butlast,
     complement, reverse, exception, compose
-} = require('./lib/util');
-
-const { meta, withMeta } = require('./lib/meta');
+} = require('nilish');
 
 const zipper = (isBranch, children, makeNode, root) =>
     withMeta([ root, nil ], { isBranch, children, makeNode });
@@ -16,7 +14,7 @@ const arrayZip = root =>
 
 const node = first;
 
-const isBranch = loc => meta(loc).isBranch(node(loc));
+const isBranch = loc => isNil(loc) ? nil : meta(loc).isBranch(node(loc));
 
 const children = loc => isBranch(loc)
     ? meta(loc).children(node(loc))
