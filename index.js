@@ -14,14 +14,7 @@ const zipper = (isBranch, children, makeNode, root) =>
 const arrayZip = root =>
     zipper(isArray, identity, (node, children) => withMeta(children, meta(node)), root);
 
-const xmlZip = root =>
-    zipper(complement(isString), v => v.content || v, (node, children) => ({ ...node, content: children }), root);
-
 const node = first;
-
-const attr = name => compose(n => (n.attrs || {})[name], first);
-
-const text = compose(n => n.text, first);
 
 const isBranch = loc => meta(loc).isBranch(node(loc));
 
@@ -211,10 +204,7 @@ const remove = loc => {
 module.exports = {
     zipper,
     arrayZip,
-    xmlZip,
     node,
-    attr,
-    text,
     isBranch,
     children,
     makeNode,
